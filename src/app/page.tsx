@@ -1,3 +1,4 @@
+import { ClientProvider } from '../components/ClientProvider'
 import ModuleComponent from '../components/ModuleComponent'
 import styles from './page.module.scss'
 
@@ -64,7 +65,12 @@ const programs: Program[] = [
   },
 ]
 
-export default function Home() {
+const finalItems = [
+  'Бизнес-проектирование (подготовка итоговой аттестационной работы, консультирование по бизнес-проектированию)',
+  'Защита итоговой аттестационной работы',
+] as const
+
+function MainContent({ isMobile }: { isMobile: boolean }) {
   return (
     <main className={styles.main}>
       <div className={styles.container}>
@@ -78,11 +84,12 @@ export default function Home() {
               <div className={styles.modules}>
                 {program.modules.map((module, moduleIndex) => (
                   <ModuleComponent
-                    key={module.title}
+                    key={`${programIndex}-${moduleIndex}`}
                     title={module.title}
                     items={module.items}
                     programIndex={programIndex}
                     moduleIndex={moduleIndex}
+                    isMobile={isMobile}
                   />
                 ))}
               </div>
@@ -101,10 +108,7 @@ export default function Home() {
           <div className={styles.finalModule}>
             <h3 className={styles.rectangleTitle}>Итоговая аттестация</h3>
             <ul className={styles.finalList}>
-              {[
-                'Бизнес-проектирование (подготовка итоговой аттестационной работы, консультирование по бизнес-проектированию)',
-                'Защита итоговой аттестационной работы',
-              ].map((item) => (
+              {finalItems.map((item) => (
                 <li key={item} className={styles.finalItem}>
                   <span className={styles.dot}>
                     <span className={styles.dotInner} />
@@ -117,5 +121,11 @@ export default function Home() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function Home() {
+  return (
+    <ClientProvider mobileContent={<MainContent isMobile={true} />} desktopContent={<MainContent isMobile={false} />} />
   )
 }

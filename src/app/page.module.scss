@@ -6,7 +6,7 @@ $white: #ffffff;
 .main {
   min-height: 100vh;
   background-color: $white;
-  padding: 20px 0 0;
+  padding: 20px 0 30px;
 
   @media (min-width: 768px) {
     padding: 30px 16px;
@@ -271,7 +271,7 @@ $white: #ffffff;
 
 .finalModule {
   background-color: $dark;
-  padding: 24px;
+  padding: 24px 24px 32px;
   color: $white;
 
   @media (min-width: 768px) {
@@ -311,6 +311,10 @@ $white: #ffffff;
   display: flex;
   align-items: flex-start;
   gap: 10px;
+}
+
+.finalItem:last-child {
+  margin-bottom: 19px;
 }
 
 @media (prefers-reduced-motion: reduce) {

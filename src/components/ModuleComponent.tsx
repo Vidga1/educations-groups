@@ -1,45 +1,25 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, memo, useCallback } from 'react'
 import { Plus, Minus } from 'lucide-react'
 import styles from '../app/page.module.scss'
 
 interface ModuleProps {
   title: string
-  items: string[]
+  items: readonly string[]
   programIndex: number
   moduleIndex: number
+  isMobile: boolean
 }
 
-export default function ModuleComponent({ title, items, programIndex, moduleIndex }: ModuleProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [isMobile, setIsMobile] = useState(true)
+const ModuleComponent = memo(function ModuleComponent({ title, items, isMobile }: ModuleProps) {
+  const [isExpanded, setIsExpanded] = useState(!isMobile)
 
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-
-    checkIfMobile()
-
-    window.addEventListener('resize', checkIfMobile)
-
-    return () => {
-      window.removeEventListener('resize', checkIfMobile)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!isMobile) {
-      setIsExpanded(true)
-    }
-  }, [isMobile])
-
-  const toggleModule = () => {
+  const toggleModule = useCallback(() => {
     if (isMobile) {
       setIsExpanded((prev) => !prev)
     }
-  }
+  }, [isMobile])
 
   return (
     <div className={`${styles.module} ${isExpanded && isMobile ? styles.active : ''}`}>
@@ -63,4 +43,6 @@ export default function ModuleComponent({ title, items, programIndex, moduleInde
       </ul>
     </div>
   )
-}
+})
+
+export default ModuleComponent
