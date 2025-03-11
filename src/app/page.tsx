@@ -1,95 +1,121 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import ModuleComponent from '../components/ModuleComponent'
+import styles from './page.module.scss'
+
+interface Module {
+  title: string
+  items: string[]
+}
+
+interface Program {
+  title: string
+  modules: Module[]
+}
+
+const programs: Program[] = [
+  {
+    title: 'Антикризисное управление',
+    modules: [
+      {
+        title: '1 модуль',
+        items: [
+          'Маркетинговые стратегии антикризисного менеджмента',
+          'Антикризисное управление предприятиями: реструктуризация, банкротство, слияние и поглощение',
+          'Правовые основы антикризисного управления',
+          'Проектный менеджмент в антикризисном управлении',
+          'Финансово-экономические инструменты антикризисного управления',
+        ],
+      },
+      {
+        title: '2 модуль',
+        items: [
+          'Формирование и развитие компетенций в антикризисном управлении',
+          'Анализ и диагностика кризисных угроз в управлении',
+          'Инструменты антикризисного менеджмента',
+          'Механизмы антикризисного управления бизнесом',
+          'Антикризисный консалтинг',
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Управление малым бизнесом',
+    modules: [
+      {
+        title: '1 модуль',
+        items: [
+          'Управление в сфере малого бизнеса',
+          'Управление start-up-проектами',
+          'Предпринимательство и предпринимательские проекты',
+          'Анализ и моделирование бизнес-процессов',
+          'Оценка и управление стоимостью бизнеса',
+        ],
+      },
+      {
+        title: '2 модуль',
+        items: [
+          'Стратегии развития и управление ростом бизнеса',
+          'Стратегическое финансовое управление бизнесом на основе ценностно-ориентированного подхода',
+          'Бизнес-процессы и оргструктура компании',
+          'Налоговый менеджмент компании',
+          'Правовые основы предпринимательской деятельности',
+        ],
+      },
+    ],
+  },
+]
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <main className={styles.main}>
+      <div className={styles.container}>
+        <h1 className={styles.title}>Специализированные дисциплины</h1>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+        <div className={styles.programs}>
+          {programs.map((program, programIndex) => (
+            <section key={program.title} className={styles.program}>
+              <h2 className={styles.programTitle}>{program.title}</h2>
+
+              <div className={styles.modules}>
+                {program.modules.map((module, moduleIndex) => (
+                  <ModuleComponent
+                    key={module.title}
+                    title={module.title}
+                    items={module.items}
+                    programIndex={programIndex}
+                    moduleIndex={moduleIndex}
+                  />
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+
+        <div className={styles.rectangles}>
+          <div className={styles.practicalModule}>
+            <h3 className={styles.rectangleTitle}>Практические модули</h3>
+            <p className={styles.rectangleText}>
+              Работа над собственными проектами: практика групповых взаимодействий, кейс-методы, эссе
+            </p>
+          </div>
+
+          <div className={styles.finalModule}>
+            <h3 className={styles.rectangleTitle}>Итоговая аттестация</h3>
+            <ul className={styles.finalList}>
+              {[
+                'Бизнес-проектирование (подготовка итоговой аттестационной работы, консультирование по бизнес-проектированию)',
+                'Защита итоговой аттестационной работы',
+              ].map((item) => (
+                <li key={item} className={styles.finalItem}>
+                  <span className={styles.dot}>
+                    <span className={styles.dotInner} />
+                  </span>
+                  <span className={styles.itemText}>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+  )
 }

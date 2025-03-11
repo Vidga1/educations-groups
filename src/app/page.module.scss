@@ -1,0 +1,320 @@
+$red: #ff3535;
+$dark-red: #cd1800;
+$dark: #2d2c2a;
+$white: #ffffff;
+
+.main {
+  min-height: 100vh;
+  background-color: $white;
+  padding: 20px 0 0;
+
+  @media (min-width: 768px) {
+    padding: 30px 16px;
+  }
+}
+
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 16px;
+
+  @media (min-width: 768px) {
+    padding: 0;
+  }
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: left;
+  margin-bottom: 30px;
+  line-height: 120%;
+
+  @media (min-width: 768px) {
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 50px;
+  }
+}
+
+.programs {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+
+  @media (min-width: 768px) {
+    gap: 50px;
+  }
+}
+
+.program {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (min-width: 768px) {
+    gap: 30px;
+  }
+}
+
+.programTitle {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 120%;
+  margin-bottom: 10px;
+
+  @media (min-width: 768px) {
+    font-size: 26px;
+  }
+}
+
+.modules {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+}
+
+.module {
+  position: relative;
+
+  @media (max-width: 767px) {
+    &.active {
+      .moduleButton {
+        background-color: $red;
+        color: $white;
+
+        .icon {
+          color: $white;
+        }
+      }
+
+      .moduleList {
+        background-color: $white;
+        border-radius: 0 0 4px 4px;
+      }
+    }
+  }
+}
+
+.moduleHeader {
+  position: relative;
+
+  @media (min-width: 768px) {
+    width: 35%;
+    float: left;
+  }
+}
+
+.moduleLine {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+    width: 140px;
+    border-top: 2px solid $red;
+    margin-bottom: 30px;
+  }
+}
+
+.moduleButton {
+  width: 100%;
+  text-align: left;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: $white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+
+  @media (min-width: 768px) {
+    cursor: default;
+    pointer-events: none;
+    background-color: transparent;
+    padding: 0;
+  }
+}
+
+.moduleTitle {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 120%;
+
+  @media (min-width: 768px) {
+    font-size: 32px;
+  }
+}
+
+.icon {
+  color: $red;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.moduleList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  padding: 0 16px;
+  background-color: $white;
+
+  &.expanded {
+    max-height: 1000px;
+    opacity: 1;
+    padding: 16px;
+  }
+
+  @media (min-width: 768px) {
+    max-height: unset;
+    opacity: 1;
+    overflow: visible;
+    transition: none;
+    width: 60%;
+    float: right;
+    padding: 0;
+  }
+}
+
+.moduleItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.dot {
+  position: relative;
+  width: 6px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.dotInner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 5px;
+  height: 5px;
+  background-color: $red;
+  border-radius: 50%;
+}
+
+.itemText {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 120%;
+}
+
+.rectangles {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 40px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-top: 50px;
+  }
+}
+
+.practicalModule {
+  position: relative;
+  background-color: $red;
+  padding: 24px;
+  color: $white;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    padding: 32px;
+  }
+}
+
+.practicalModule::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 43px 0 0 43px;
+  border-color: transparent transparent transparent $dark-red;
+  z-index: 5;
+}
+
+.practicalModule::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 43px 43px 0;
+  border-color: transparent $white transparent transparent;
+  z-index: 4;
+}
+
+.finalModule {
+  background-color: $dark;
+  padding: 24px;
+  color: $white;
+
+  @media (min-width: 768px) {
+    padding: 32px;
+  }
+}
+
+.rectangleTitle {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 130%;
+
+  @media (min-width: 768px) {
+    font-size: 36px;
+    margin-bottom: 24px;
+  }
+}
+
+.rectangleText {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 130%;
+
+  @media (min-width: 768px) {
+    font-size: 20px;
+  }
+}
+
+.finalList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.finalItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moduleList {
+    transition: none;
+  }
+}
