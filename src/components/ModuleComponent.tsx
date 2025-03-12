@@ -1,25 +1,34 @@
 'use client'
 
-import { useState, memo, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, Minus } from 'lucide-react'
-import styles from '../app/page.module.scss'
+import styles from './ModuleComponent.module.scss'
+
+interface Item {
+  id: number
+  text: string
+}
 
 interface ModuleProps {
   title: string
-  items: readonly string[]
+  items: Item[]
   programIndex: number
   moduleIndex: number
   isMobile: boolean
 }
 
-const ModuleComponent = memo(function ModuleComponent({ title, items, isMobile }: ModuleProps) {
+export default function ModuleComponent({ title, items, isMobile }: ModuleProps) {
   const [isExpanded, setIsExpanded] = useState(!isMobile)
 
-  const toggleModule = useCallback(() => {
+  useEffect(() => {
+    setIsExpanded(!isMobile)
+  }, [isMobile])
+
+  const toggleModule = () => {
     if (isMobile) {
       setIsExpanded((prev) => !prev)
     }
-  }, [isMobile])
+  }
 
   return (
     <div className={`${styles.module} ${isExpanded && isMobile ? styles.active : ''}`}>
@@ -27,22 +36,25 @@ const ModuleComponent = memo(function ModuleComponent({ title, items, isMobile }
         <div className={styles.moduleLine} />
         <button onClick={toggleModule} className={styles.moduleButton} aria-expanded={isExpanded}>
           <h3 className={styles.moduleTitle}>{title}</h3>
-          {isMobile && (isExpanded ? <Minus className={styles.icon} /> : <Plus className={styles.icon} />)}
+          {isMobile &&
+            (isExpanded ? (
+              <Minus size={24} strokeWidth={2.5} className={styles.icon} />
+            ) : (
+              <Plus size={24} strokeWidth={2.5} className={styles.icon} />
+            ))}
         </button>
       </div>
 
       <ul className={`${styles.moduleList} ${isExpanded ? styles.expanded : ''}`}>
         {items.map((item) => (
-          <li key={item} className={styles.moduleItem}>
+          <li key={item.id} className={styles.moduleItem}>
             <span className={styles.dot}>
               <span className={styles.dotInner} />
             </span>
-            <span className={styles.itemText}>{item}</span>
+            <span className={styles.itemText}>{item.text}</span>
           </li>
         ))}
       </ul>
     </div>
   )
-})
-
-export default ModuleComponent
+}
