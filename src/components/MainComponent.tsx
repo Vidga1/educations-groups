@@ -47,7 +47,7 @@ const finalItems = [
 async function getData(): Promise<Program[]> {
   try {
     const res = await fetch('https://api.moscow.mba/products', {
-      next: { revalidate: 3600 },
+      cache: 'no-store',
     })
     if (!res.ok) throw new Error('Failed to fetch data')
     return res.json()
