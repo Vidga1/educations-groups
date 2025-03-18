@@ -55,8 +55,23 @@ async function getData(): Promise<Program[]> {
 export default async function MainComponent() {
   const rawData = await getData()
 
-  const programs: ProcessedProgram[] = rawData
+  const filteredData = rawData
+    .filter((program) => {
+      try {
+        if (typeof program.specializedSubjects === 'string') {
+          return program.specializedSubjects.includes('"skills"')
+        } else {
+          return (program.specializedSubjects as SpecializedSubject[]).some(
+            (subject) => subject.skills && subject.skills.length > 0
+          )
+        }
+      } catch {
+        return false
+      }
+    })
     .slice(0, 5)
+
+  const programs: ProcessedProgram[] = filteredData
     .map((program: Program): ProcessedProgram | null => {
       let subjects: SpecializedSubject[]
 
