@@ -55,40 +55,28 @@ async function getData(): Promise<Program[]> {
 export default async function MainComponent() {
   const rawData = await getData()
 
-  const filteredData = rawData
-    .filter((program) => {
-      try {
-        if (typeof program.specializedSubjects === 'string') {
-          return program.specializedSubjects.includes('"skills"')
-        } else {
-          return (program.specializedSubjects as SpecializedSubject[]).some(
-            (subject) => subject.skills && subject.skills.length > 0
-          )
-        }
-      } catch {
-        return false
-      }
-    })
-    .slice(0, 5)
+  const programMap = new Map<number, ProcessedProgram>()
 
-  const programs: ProcessedProgram[] = filteredData
-    .map((program: Program): ProcessedProgram | null => {
-      let subjects: SpecializedSubject[]
-
-      try {
-        subjects =
-          typeof program.specializedSubjects === 'string'
-            ? JSON.parse(program.specializedSubjects)
-            : (program.specializedSubjects as SpecializedSubject[]) || []
-      } catch {
-        subjects = []
+  rawData.forEach((program: Program) => {
+    try {
+      if (
+        (typeof program.specializedSubjects === 'string' && !program.specializedSubjects.includes('"skills"')) ||
+        (Array.isArray(program.specializedSubjects) &&
+          !(program.specializedSubjects as SpecializedSubject[]).some((s) => s.skills && s.skills.length > 0))
+      ) {
+        return
       }
+
+      const subjects: SpecializedSubject[] =
+        typeof program.specializedSubjects === 'string'
+          ? JSON.parse(program.specializedSubjects)
+          : (program.specializedSubjects as SpecializedSubject[])
 
       const skillMap = new Map<number, ProcessedItem>()
 
-      subjects.forEach((subject) => {
-        if (subject.skills) {
-          subject.skills.forEach((skill) => {
+      subjects.forEach((subject: SpecializedSubject) => {
+        if (subject.skills && Array.isArray(subject.skills)) {
+          subject.skills.forEach((skill: Skill) => {
             skillMap.set(skill.id, {
               id: skill.id,
               text: skill.string,
@@ -97,31 +85,43 @@ export default async function MainComponent() {
         }
       })
 
-      const skills = Array.from(skillMap.values())
-      if (skills.length === 0) return null
+      const skills: ProcessedItem[] = Array.from(skillMap.values())
+      if (skills.length === 0) return
 
       const half = Math.ceil(skills.length / 2)
       const modules: ProcessedModule[] = []
 
-      if (skills.slice(0, half).length > 0) {
+      const firstHalf = skills.slice(0, half)
+      if (firstHalf.length > 0) {
         modules.push({
           id: `${program.id}-1`,
           title: '1 модуль',
-          items: skills.slice(0, half),
+          items: firstHalf,
         })
       }
 
-      if (skills.slice(half).length > 0) {
+      const secondHalf = skills.slice(half)
+      if (secondHalf.length > 0) {
         modules.push({
           id: `${program.id}-2`,
           title: '2 модуль',
-          items: skills.slice(half),
+          items: secondHalf,
         })
       }
 
-      return modules.length > 0 ? { id: program.id, title: program.title, modules } : null
-    })
-    .filter((program): program is ProcessedProgram => program !== null)
+      if (modules.length > 0) {
+        programMap.set(program.id, {
+          id: program.id,
+          title: program.title,
+          modules,
+        })
+      }
+    } catch (error) {
+      console.debug(`Ошибка обработки программы ${program.id}:`, error)
+    }
+  })
+
+  const programs: ProcessedProgram[] = Array.from(programMap.values()).slice(0, 5)
 
   return <ClientMainContent programs={programs} finalItems={finalItems} />
 }
