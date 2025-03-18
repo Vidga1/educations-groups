@@ -11,11 +11,6 @@ interface SpecializedSubject {
   skills?: Skill[]
 }
 
-interface ParsedSpecializedSubject {
-  id: number
-  skills?: Skill[]
-}
-
 interface Program {
   id: number
   title: string
@@ -60,54 +55,58 @@ async function getData(): Promise<Program[]> {
 export default async function MainComponent() {
   const rawData = await getData()
 
-  const programs = rawData
-    .filter((program) => {
+  const programs: ProcessedProgram[] = rawData
+    .slice(0, 5)
+    .map((program: Program): ProcessedProgram | null => {
+      let subjects: SpecializedSubject[]
+
       try {
-        const subjects: ParsedSpecializedSubject[] =
+        subjects =
           typeof program.specializedSubjects === 'string'
             ? JSON.parse(program.specializedSubjects)
-            : program.specializedSubjects || []
-
-        return subjects.some((subject) => Array.isArray(subject.skills) && subject.skills.length > 0)
+            : (program.specializedSubjects as SpecializedSubject[]) || []
       } catch {
-        return false
+        subjects = []
       }
-    })
-    .slice(0, 5)
-    .map((program) => {
-      const subjects: ParsedSpecializedSubject[] =
-        typeof program.specializedSubjects === 'string'
-          ? JSON.parse(program.specializedSubjects)
-          : (program.specializedSubjects as SpecializedSubject[])
 
-      const skills: ProcessedItem[] = subjects.flatMap(
-        (subject) =>
-          subject.skills?.map((skill) => ({
-            id: skill.id,
-            text: skill.string,
-          })) || []
-      )
+      const skillMap = new Map<number, ProcessedItem>()
+
+      subjects.forEach((subject) => {
+        if (subject.skills) {
+          subject.skills.forEach((skill) => {
+            skillMap.set(skill.id, {
+              id: skill.id,
+              text: skill.string,
+            })
+          })
+        }
+      })
+
+      const skills = Array.from(skillMap.values())
+      if (skills.length === 0) return null
 
       const half = Math.ceil(skills.length / 2)
+      const modules: ProcessedModule[] = []
 
-      return {
-        id: program.id,
-        title: program.title,
-        modules: [
-          {
-            id: `${program.id}-1`,
-            title: '1 модуль',
-            items: skills.slice(0, half),
-          },
-          {
-            id: `${program.id}-2`,
-            title: '2 модуль',
-            items: skills.slice(half),
-          },
-        ].filter((module) => module.items.length > 0) as ProcessedModule[],
-      } as ProcessedProgram
+      if (skills.slice(0, half).length > 0) {
+        modules.push({
+          id: `${program.id}-1`,
+          title: '1 модуль',
+          items: skills.slice(0, half),
+        })
+      }
+
+      if (skills.slice(half).length > 0) {
+        modules.push({
+          id: `${program.id}-2`,
+          title: '2 модуль',
+          items: skills.slice(half),
+        })
+      }
+
+      return modules.length > 0 ? { id: program.id, title: program.title, modules } : null
     })
-    .filter((program) => program.modules.length > 0)
+    .filter((program): program is ProcessedProgram => program !== null)
 
   return <ClientMainContent programs={programs} finalItems={finalItems} />
 }
